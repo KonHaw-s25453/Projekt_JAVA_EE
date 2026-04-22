@@ -1,8 +1,11 @@
 package com.asms.controller;
 
+import com.asms.dto.SoftwareCatalogDTO;
+import com.asms.dto.SoftwareVersionDTO;
 import com.asms.entity.SoftwareCatalog;
 import com.asms.entity.SoftwareVersion;
 import com.asms.service.SoftwareService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +22,8 @@ public class SoftwareController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<SoftwareCatalog> create(@RequestBody SoftwareCatalog software) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(softwareService.createSoftware(software));
+    public ResponseEntity<SoftwareCatalog> create(@Valid @RequestBody SoftwareCatalogDTO dto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(softwareService.createSoftware(dto));
     }
 
     @GetMapping
@@ -35,8 +38,8 @@ public class SoftwareController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<SoftwareCatalog> update(@PathVariable Long id, @RequestBody SoftwareCatalog software) {
-        return ResponseEntity.ok(softwareService.updateSoftware(id, software));
+    public ResponseEntity<SoftwareCatalog> update(@PathVariable Long id, @Valid @RequestBody SoftwareCatalogDTO dto) {
+        return ResponseEntity.ok(softwareService.updateSoftware(id, dto));
     }
 
     @DeleteMapping("/{id}")
@@ -53,7 +56,7 @@ public class SoftwareController {
 
     @PostMapping("/{id}/versions")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<SoftwareVersion> addVersion(@PathVariable Long id, @RequestBody SoftwareVersion version) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(softwareService.addVersion(id, version));
+    public ResponseEntity<SoftwareVersion> addVersion(@PathVariable Long id, @Valid @RequestBody SoftwareVersionDTO dto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(softwareService.addVersion(id, dto));
     }
 }

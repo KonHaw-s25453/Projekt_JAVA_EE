@@ -39,6 +39,7 @@ public class CommentController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or @commentService.getById(#id).author.username == authentication.name")
     public ResponseEntity<Comment> update(@PathVariable Long id, @Valid @RequestBody CommentDTO dto) {
         return ResponseEntity.ok(commentService.update(id, dto));
     }

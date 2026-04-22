@@ -1,5 +1,7 @@
 package com.asms.service;
 
+import com.asms.dto.SoftwareCatalogDTO;
+import com.asms.dto.SoftwareVersionDTO;
 import com.asms.entity.SoftwareCatalog;
 import com.asms.entity.SoftwareVersion;
 import com.asms.exception.ResourceNotFoundException;
@@ -18,7 +20,14 @@ public class SoftwareService {
     private final SoftwareCatalogRepository softwareCatalogRepository;
     private final SoftwareVersionRepository softwareVersionRepository;
 
-    public SoftwareCatalog createSoftware(SoftwareCatalog software) {
+    public SoftwareCatalog createSoftware(SoftwareCatalogDTO dto) {
+        SoftwareCatalog software = SoftwareCatalog.builder()
+                .name(dto.getName())
+                .description(dto.getDescription())
+                .licenseType(dto.getLicenseType())
+                .officialSite(dto.getOfficialSite())
+                .isActive(dto.getIsActive() != null ? dto.getIsActive() : true)
+                .build();
         return softwareCatalogRepository.save(software);
     }
 
@@ -38,13 +47,15 @@ public class SoftwareService {
         return softwareCatalogRepository.findByIsActiveTrue();
     }
 
-    public SoftwareCatalog updateSoftware(Long id, SoftwareCatalog software) {
+    public SoftwareCatalog updateSoftware(Long id, SoftwareCatalogDTO dto) {
         SoftwareCatalog existing = getSoftwareById(id);
-        existing.setName(software.getName());
-        existing.setDescription(software.getDescription());
-        existing.setLicenseType(software.getLicenseType());
-        existing.setOfficialSite(software.getOfficialSite());
-        existing.setIsActive(software.getIsActive());
+        existing.setName(dto.getName());
+        existing.setDescription(dto.getDescription());
+        existing.setLicenseType(dto.getLicenseType());
+        existing.setOfficialSite(dto.getOfficialSite());
+        if (dto.getIsActive() != null) {
+            existing.setIsActive(dto.getIsActive());
+        }
         return softwareCatalogRepository.save(existing);
     }
 
@@ -58,9 +69,15 @@ public class SoftwareService {
         return softwareVersionRepository.findBySoftwareId(softwareId);
     }
 
-    public SoftwareVersion addVersion(Long softwareId, SoftwareVersion version) {
+    public SoftwareVersion addVersion(Long softwareId, SoftwareVersionDTO dto) {
         SoftwareCatalog software = getSoftwareById(softwareId);
-        version.setSoftwareCatalog(software);
+        SoftwareVersion version = SoftwareVersion.builder()
+                .softwareCatalog(software)
+                .versionNumber(dto.getVersionNumber())
+                .releaseDate(dto.getReleaseDate())
+                .downloadUrl(dto.getDownloadUrl())
+                .changelog(dto.getChangelog())
+                .build();
         return softwareVersionRepository.save(version);
     }
 }

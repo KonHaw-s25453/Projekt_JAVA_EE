@@ -72,18 +72,18 @@ mvn spring-boot:run -Dspring-boot.run.profiles=dev
 Or with Java:
 
 ```bash
-java -jar target/asms-1.0.0.jar -Dspring.profiles.active=dev
+java -Dspring.profiles.active=dev -jar target/asms-1.0.0.jar
 ```
 
 ### Production Profile
 
 ```bash
-java -jar target/asms-1.0.0.jar \
-  -Dspring.profiles.active=prod \
+java -Dspring.profiles.active=prod \
   -DDB_HOST=your-db-host \
   -DDB_NAME=asms \
   -DDB_USERNAME=asms_user \
-  -DDB_PASSWORD=yourpassword
+  -DDB_PASSWORD=yourpassword \
+  -jar target/asms-1.0.0.jar
 ```
 
 The application starts on **http://localhost:8080**
