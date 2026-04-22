@@ -1,6 +1,8 @@
 package com.asms.controller;
 
+import com.asms.dto.AssignAdminDTO;
 import com.asms.dto.InstalledSoftwareDTO;
+import com.asms.dto.UpdateStatusDTO;
 import com.asms.entity.InstalledSoftware;
 import com.asms.service.InstalledSoftwareService;
 import jakarta.validation.Valid;
@@ -10,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/installed-software")
@@ -49,8 +50,8 @@ public class InstalledSoftwareController {
 
     @PutMapping("/{id}/status")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<InstalledSoftware> changeStatus(@PathVariable Long id, @RequestBody Map<String, String> body) {
-        return ResponseEntity.ok(installedSoftwareService.changeStatus(id, body.get("status")));
+    public ResponseEntity<InstalledSoftware> changeStatus(@PathVariable Long id, @Valid @RequestBody UpdateStatusDTO body) {
+        return ResponseEntity.ok(installedSoftwareService.changeStatus(id, body.getStatus()));
     }
 
     @GetMapping("/outdated")
@@ -60,7 +61,7 @@ public class InstalledSoftwareController {
 
     @PutMapping("/{id}/assign")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<InstalledSoftware> assignToAdmin(@PathVariable Long id, @RequestBody Map<String, Long> body) {
-        return ResponseEntity.ok(installedSoftwareService.assignToAdmin(id, body.get("adminId")));
+    public ResponseEntity<InstalledSoftware> assignToAdmin(@PathVariable Long id, @Valid @RequestBody AssignAdminDTO body) {
+        return ResponseEntity.ok(installedSoftwareService.assignToAdmin(id, body.getAdminId()));
     }
 }

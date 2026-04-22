@@ -5,6 +5,7 @@ import com.asms.entity.Comment;
 import com.asms.entity.User;
 import com.asms.exception.ResourceNotFoundException;
 import com.asms.repository.CommentRepository;
+import com.asms.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,10 +17,11 @@ import java.util.List;
 public class CommentService {
 
     private final CommentRepository commentRepository;
+    private final UserRepository userRepository;
 
     public Comment create(CommentDTO dto, Long authorId) {
-        User author = new User();
-        author.setUserId(authorId);
+        User author = userRepository.findById(authorId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", authorId));
         Comment comment = Comment.builder()
                 .entityType(dto.getEntityType())
                 .entityId(dto.getEntityId())

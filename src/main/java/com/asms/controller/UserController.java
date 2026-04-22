@@ -1,5 +1,6 @@
 package com.asms.controller;
 
+import com.asms.dto.LoginDTO;
 import com.asms.dto.UserDTO;
 import com.asms.entity.User;
 import com.asms.security.JwtTokenProvider;
@@ -33,9 +34,9 @@ public class UserController {
     }
 
     @PostMapping("/auth/login")
-    public ResponseEntity<Map<String, String>> login(@RequestBody Map<String, String> credentials) {
+    public ResponseEntity<Map<String, String>> login(@Valid @RequestBody LoginDTO credentials) {
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(credentials.get("username"), credentials.get("password"))
+                new UsernamePasswordAuthenticationToken(credentials.getUsername(), credentials.getPassword())
         );
         String token = jwtTokenProvider.generateToken(authentication);
         Map<String, String> response = new HashMap<>();
@@ -51,7 +52,7 @@ public class UserController {
     }
 
     @GetMapping("/users/{id}")
-    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.username")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getById(id));
     }

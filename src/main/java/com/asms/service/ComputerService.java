@@ -5,6 +5,7 @@ import com.asms.entity.Computer;
 import com.asms.entity.OperatingSystem;
 import com.asms.exception.ResourceNotFoundException;
 import com.asms.repository.ComputerRepository;
+import com.asms.repository.OperatingSystemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,7 @@ import java.util.HashMap;
 public class ComputerService {
 
     private final ComputerRepository computerRepository;
+    private final OperatingSystemRepository operatingSystemRepository;
 
     public Computer create(ComputerDTO dto) {
         Computer computer = Computer.builder()
@@ -28,8 +30,8 @@ public class ComputerService {
                 .status(dto.getStatus() != null ? dto.getStatus() : "ACTIVE")
                 .build();
         if (dto.getOsId() != null) {
-            OperatingSystem os = new OperatingSystem();
-            os.setOsId(dto.getOsId());
+            OperatingSystem os = operatingSystemRepository.findById(dto.getOsId())
+                    .orElseThrow(() -> new ResourceNotFoundException("OperatingSystem", "id", dto.getOsId()));
             computer.setOperatingSystem(os);
         }
         return computerRepository.save(computer);
@@ -75,8 +77,8 @@ public class ComputerService {
     public Map<String, Object> getStats() {
         Map<String, Object> stats = new HashMap<>();
         stats.put("total", computerRepository.count());
-        stats.put("active", computerRepository.findByStatus("ACTIVE").size());
-        stats.put("inactive", computerRepository.findByStatus("INACTIVE").size());
+        stats.put("active", computerRepository.countByStatus("ACTIVE"));
+        stats.put("inactive", computerRepository.countByStatus("INACTIVE"));
         return stats;
     }
 }

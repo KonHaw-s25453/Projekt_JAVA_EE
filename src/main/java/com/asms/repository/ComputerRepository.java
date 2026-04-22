@@ -10,4 +10,5 @@ public interface ComputerRepository extends JpaRepository<Computer, Long> {
     List<Computer> findByStatus(String status);
     List<Computer> findByLocation(String location);
     List<Computer> findByNameContainingIgnoreCase(String name);
+    long countByStatus(String status);
 }

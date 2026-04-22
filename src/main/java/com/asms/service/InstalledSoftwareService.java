@@ -3,7 +3,10 @@ package com.asms.service;
 import com.asms.dto.InstalledSoftwareDTO;
 import com.asms.entity.*;
 import com.asms.exception.ResourceNotFoundException;
+import com.asms.repository.ComputerRepository;
 import com.asms.repository.InstalledSoftwareRepository;
+import com.asms.repository.SoftwareVersionRepository;
+import com.asms.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,12 +18,15 @@ import java.util.List;
 public class InstalledSoftwareService {
 
     private final InstalledSoftwareRepository installedSoftwareRepository;
+    private final ComputerRepository computerRepository;
+    private final SoftwareVersionRepository softwareVersionRepository;
+    private final UserRepository userRepository;
 
     public InstalledSoftware create(InstalledSoftwareDTO dto) {
-        Computer computer = new Computer();
-        computer.setComputerId(dto.getComputerId());
-        SoftwareVersion version = new SoftwareVersion();
-        version.setSoftwareVersionId(dto.getSoftwareVersionId());
+        Computer computer = computerRepository.findById(dto.getComputerId())
+                .orElseThrow(() -> new ResourceNotFoundException("Computer", "id", dto.getComputerId()));
+        SoftwareVersion version = softwareVersionRepository.findById(dto.getSoftwareVersionId())
+                .orElseThrow(() -> new ResourceNotFoundException("SoftwareVersion", "id", dto.getSoftwareVersionId()));
         InstalledSoftware installed = InstalledSoftware.builder()
                 .computer(computer)
                 .softwareVersion(version)
@@ -66,8 +72,8 @@ public class InstalledSoftwareService {
 
     public InstalledSoftware assignToAdmin(Long id, Long adminId) {
         InstalledSoftware installed = getById(id);
-        User admin = new User();
-        admin.setUserId(adminId);
+        User admin = userRepository.findById(adminId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", adminId));
         installed.setAssignedToAdmin(admin);
         return installedSoftwareRepository.save(installed);
     }
