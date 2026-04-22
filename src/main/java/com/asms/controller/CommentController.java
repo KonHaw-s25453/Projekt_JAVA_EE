@@ -3,6 +3,7 @@ package com.asms.controller;
 import com.asms.dto.CommentDTO;
 import com.asms.entity.Comment;
 import com.asms.entity.User;
+import com.asms.exception.UnauthorizedException;
 import com.asms.service.CommentService;
 import com.asms.service.UserService;
 import jakarta.validation.Valid;
@@ -39,8 +40,14 @@ public class CommentController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or @commentService.getById(#id).author.username == authentication.name")
-    public ResponseEntity<Comment> update(@PathVariable Long id, @Valid @RequestBody CommentDTO dto) {
+    public ResponseEntity<Comment> update(@PathVariable Long id, @Valid @RequestBody CommentDTO dto,
+                                          Authentication authentication) {
+        Comment existing = commentService.getById(id);
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+        if (!isAdmin && !existing.getAuthor().getUsername().equals(authentication.getName())) {
+            throw new UnauthorizedException("You are not allowed to update this comment");
+        }
         return ResponseEntity.ok(commentService.update(id, dto));
     }
 
