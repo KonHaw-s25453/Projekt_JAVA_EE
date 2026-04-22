@@ -1,0 +1,33 @@
+# Maven
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Eclipse
+.classpath
+.project
+.settings/
+.metadata/
+*.launch
+
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# Spring Boot
+spring-shell.log
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
