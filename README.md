@@ -1,28 +1,28 @@
-# Asset & Software Management System (ASMS)
+# System Zarządzania Zasobami i Oprogramowaniem (ASMS)
 
-A comprehensive RESTful API built with **Spring Boot 3.2.0** for managing IT assets (computers) and software installations across an organization.
+Kompleksowe RESTful API zbudowane przy użyciu **Spring Boot 3.2.0** do zarządzania zasobami IT (komputerami) oraz instalacjami oprogramowania w organizacji.
 
-## Description
+## Opis
 
-ASMS enables IT administrators and users to:
-- Track computers/hardware assets with their operating systems
-- Manage a software catalog with versioning
-- Record software installations per machine
-- Flag outdated software and assign update tasks to admins
-- Leave comments on assets and software entries
-- Secure all operations with JWT-based authentication and role-based access control
+ASMS umożliwia administratorom IT oraz użytkownikom:
+- Śledzenie komputerów i zasobów sprzętowych wraz z ich systemami operacyjnymi
+- Zarządzanie katalogiem oprogramowania z obsługą wersjonowania
+- Rejestrowanie instalacji oprogramowania na poszczególnych maszynach
+- Oznaczanie przestarzałego oprogramowania i przypisywanie zadań aktualizacyjnych administratorom
+- Dodawanie komentarzy do zasobów i wpisów oprogramowania
+- Zabezpieczanie wszystkich operacji za pomocą uwierzytelniania JWT i kontroli dostępu opartej na rolach
 
 ---
 
-## Prerequisites
+## Wymagania wstępne
 
 - **Java 17+**
-- **MySQL 8.0+** (or use the H2 in-memory database for development)
+- **MySQL 8.0+** (lub baza danych H2 in-memory do celów deweloperskich)
 - **Maven 3.6+**
 
 ---
 
-## Installation
+## Instalacja
 
 ```bash
 git clone https://github.com/KonHaw-s25453/Projekt_JAVA_EE.git
@@ -32,161 +32,161 @@ mvn install -DskipTests
 
 ---
 
-## Configuration
+## Konfiguracja
 
-### MySQL Setup
+### Konfiguracja MySQL
 
-Create a database and user:
+Utwórz bazę danych i użytkownika:
 
 ```sql
 CREATE DATABASE asms CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-CREATE USER 'asms_user'@'localhost' IDENTIFIED BY 'yourpassword';
+CREATE USER 'asms_user'@'localhost' IDENTIFIED BY 'twoje_haslo';
 GRANT ALL PRIVILEGES ON asms.* TO 'asms_user'@'localhost';
 FLUSH PRIVILEGES;
 ```
 
-Update `src/main/resources/application.properties`:
+Zaktualizuj plik `src/main/resources/application.properties`:
 
 ```properties
 spring.datasource.url=jdbc:mysql://localhost:3306/asms?useSSL=false&serverTimezone=UTC
 spring.datasource.username=asms_user
-spring.datasource.password=yourpassword
+spring.datasource.password=twoje_haslo
 ```
 
 ---
 
-## Running the Application
+## Uruchamianie aplikacji
 
-### Default (MySQL)
+### Domyślny tryb (MySQL)
 
 ```bash
 mvn spring-boot:run
 ```
 
-### Development Profile (H2 in-memory database)
+### Profil deweloperski (baza H2 in-memory)
 
 ```bash
 mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
-Or with Java:
+Lub za pomocą Javy:
 
 ```bash
 java -Dspring.profiles.active=dev -jar target/asms-1.0.0.jar
 ```
 
-### Production Profile
+### Profil produkcyjny
 
 ```bash
 java -Dspring.profiles.active=prod \
-  -DDB_HOST=your-db-host \
+  -DDB_HOST=twoj-host-bazy \
   -DDB_NAME=asms \
   -DDB_USERNAME=asms_user \
-  -DDB_PASSWORD=yourpassword \
+  -DDB_PASSWORD=twoje_haslo \
   -jar target/asms-1.0.0.jar
 ```
 
-The application starts on **http://localhost:8080**
+Aplikacja uruchamia się pod adresem **http://localhost:8080**
 
 ---
 
-## API Endpoints
+## Endpointy API
 
-### Authentication (`/api/auth`)
+### Uwierzytelnianie (`/api/auth`)
 
-| Method | Endpoint              | Description           | Auth Required |
-|--------|-----------------------|-----------------------|---------------|
-| POST   | `/api/auth/register`  | Register a new user   | No            |
-| POST   | `/api/auth/login`     | Login and get JWT     | No            |
+| Metoda | Endpoint              | Opis                          | Wymagane uwierzytelnienie |
+|--------|-----------------------|-------------------------------|---------------------------|
+| POST   | `/api/auth/register`  | Rejestracja nowego użytkownika | Nie                       |
+| POST   | `/api/auth/login`     | Logowanie i pobranie tokenu JWT | Nie                      |
 
-### Users (`/api/users`)
+### Użytkownicy (`/api/users`)
 
-| Method | Endpoint          | Description         | Role     |
-|--------|-------------------|---------------------|----------|
-| GET    | `/api/users`      | List all users      | ADMIN    |
-| GET    | `/api/users/{id}` | Get user by ID      | ADMIN    |
-| PUT    | `/api/users/{id}` | Update user         | ADMIN    |
-| DELETE | `/api/users/{id}` | Delete user         | ADMIN    |
+| Metoda | Endpoint          | Opis                        | Rola     |
+|--------|-------------------|-----------------------------|----------|
+| GET    | `/api/users`      | Lista wszystkich użytkowników | ADMIN  |
+| GET    | `/api/users/{id}` | Pobierz użytkownika po ID   | ADMIN    |
+| PUT    | `/api/users/{id}` | Zaktualizuj użytkownika     | ADMIN    |
+| DELETE | `/api/users/{id}` | Usuń użytkownika            | ADMIN    |
 
-### Computers (`/api/computers`)
+### Komputery (`/api/computers`)
 
-| Method | Endpoint                  | Description           | Role        |
-|--------|---------------------------|-----------------------|-------------|
-| POST   | `/api/computers`          | Create computer       | ADMIN       |
-| GET    | `/api/computers`          | List all computers    | Authenticated |
-| GET    | `/api/computers/{id}`     | Get computer by ID    | Authenticated |
-| PUT    | `/api/computers/{id}`     | Update computer       | ADMIN       |
-| DELETE | `/api/computers/{id}`     | Delete computer       | ADMIN       |
-| GET    | `/api/computers/search`   | Search by location/status | Authenticated |
-| GET    | `/api/computers/stats`    | Computer statistics   | ADMIN       |
+| Metoda | Endpoint                  | Opis                              | Rola              |
+|--------|---------------------------|-----------------------------------|-------------------|
+| POST   | `/api/computers`          | Dodaj komputer                    | ADMIN             |
+| GET    | `/api/computers`          | Lista wszystkich komputerów       | Zalogowany        |
+| GET    | `/api/computers/{id}`     | Pobierz komputer po ID            | Zalogowany        |
+| PUT    | `/api/computers/{id}`     | Zaktualizuj komputer              | ADMIN             |
+| DELETE | `/api/computers/{id}`     | Usuń komputer                     | ADMIN             |
+| GET    | `/api/computers/search`   | Wyszukaj po lokalizacji/statusie  | Zalogowany        |
+| GET    | `/api/computers/stats`    | Statystyki komputerów             | ADMIN             |
 
-### Software Catalog (`/api/software`)
+### Katalog oprogramowania (`/api/software`)
 
-| Method | Endpoint                        | Description              | Role        |
-|--------|---------------------------------|--------------------------|-------------|
-| POST   | `/api/software`                 | Add software to catalog  | ADMIN       |
-| GET    | `/api/software`                 | List all software        | Authenticated |
-| GET    | `/api/software/{id}`            | Get software by ID       | Authenticated |
-| PUT    | `/api/software/{id}`            | Update software          | ADMIN       |
-| DELETE | `/api/software/{id}`            | Delete software          | ADMIN       |
-| GET    | `/api/software/{id}/versions`   | List software versions   | Authenticated |
-| POST   | `/api/software/{id}/versions`   | Add software version     | ADMIN       |
+| Metoda | Endpoint                        | Opis                                    | Rola       |
+|--------|---------------------------------|-----------------------------------------|------------|
+| POST   | `/api/software`                 | Dodaj oprogramowanie do katalogu        | ADMIN      |
+| GET    | `/api/software`                 | Lista całego oprogramowania             | Zalogowany |
+| GET    | `/api/software/{id}`            | Pobierz oprogramowanie po ID            | Zalogowany |
+| PUT    | `/api/software/{id}`            | Zaktualizuj oprogramowanie              | ADMIN      |
+| DELETE | `/api/software/{id}`            | Usuń oprogramowanie                     | ADMIN      |
+| GET    | `/api/software/{id}/versions`   | Lista wersji oprogramowania             | Zalogowany |
+| POST   | `/api/software/{id}/versions`   | Dodaj wersję oprogramowania             | ADMIN      |
 
-### Installed Software (`/api/installed-software`)
+### Zainstalowane oprogramowanie (`/api/installed-software`)
 
-| Method | Endpoint                              | Description                   | Role        |
-|--------|---------------------------------------|-------------------------------|-------------|
-| POST   | `/api/installed-software`             | Record installation           | ADMIN       |
-| GET    | `/api/installed-software`             | List all installations        | Authenticated |
-| GET    | `/api/installed-software/{id}`        | Get installation by ID        | Authenticated |
-| DELETE | `/api/installed-software/{id}`        | Remove installation           | ADMIN       |
-| PUT    | `/api/installed-software/{id}/flag`   | Flag for update               | Authenticated |
-| PUT    | `/api/installed-software/{id}/status` | Change update status          | ADMIN       |
-| GET    | `/api/installed-software/outdated`    | List outdated installations   | Authenticated |
-| PUT    | `/api/installed-software/{id}/assign` | Assign to admin               | ADMIN       |
+| Metoda | Endpoint                              | Opis                                    | Rola       |
+|--------|---------------------------------------|-----------------------------------------|------------|
+| POST   | `/api/installed-software`             | Zarejestruj instalację                  | ADMIN      |
+| GET    | `/api/installed-software`             | Lista wszystkich instalacji             | Zalogowany |
+| GET    | `/api/installed-software/{id}`        | Pobierz instalację po ID                | Zalogowany |
+| DELETE | `/api/installed-software/{id}`        | Usuń instalację                         | ADMIN      |
+| PUT    | `/api/installed-software/{id}/flag`   | Oznacz do aktualizacji                  | Zalogowany |
+| PUT    | `/api/installed-software/{id}/status` | Zmień status aktualizacji               | ADMIN      |
+| GET    | `/api/installed-software/outdated`    | Lista przestarzałych instalacji         | Zalogowany |
+| PUT    | `/api/installed-software/{id}/assign` | Przypisz do administratora              | ADMIN      |
 
-### Comments (`/api/comments`)
+### Komentarze (`/api/comments`)
 
-| Method | Endpoint                                  | Description              | Role        |
-|--------|-------------------------------------------|--------------------------|-------------|
-| POST   | `/api/comments`                           | Add comment              | Authenticated |
-| GET    | `/api/comments`                           | List all comments        | Authenticated |
-| GET    | `/api/comments/{id}`                      | Get comment by ID        | Authenticated |
-| PUT    | `/api/comments/{id}`                      | Update comment           | Authenticated |
-| DELETE | `/api/comments/{id}`                      | Delete comment           | ADMIN       |
-| GET    | `/api/comments/public`                    | List public comments     | Authenticated |
-| GET    | `/api/comments/entity/{type}/{entityId}`  | Comments by entity       | Authenticated |
+| Metoda | Endpoint                                  | Opis                            | Rola       |
+|--------|-------------------------------------------|---------------------------------|------------|
+| POST   | `/api/comments`                           | Dodaj komentarz                 | Zalogowany |
+| GET    | `/api/comments`                           | Lista wszystkich komentarzy     | Zalogowany |
+| GET    | `/api/comments/{id}`                      | Pobierz komentarz po ID         | Zalogowany |
+| PUT    | `/api/comments/{id}`                      | Zaktualizuj komentarz           | Zalogowany |
+| DELETE | `/api/comments/{id}`                      | Usuń komentarz                  | ADMIN      |
+| GET    | `/api/comments/public`                    | Lista publicznych komentarzy    | Zalogowany |
+| GET    | `/api/comments/entity/{type}/{entityId}`  | Komentarze do danego zasobu     | Zalogowany |
 
 ---
 
-## Authentication Flow
+## Przepływ uwierzytelniania
 
-1. **Register** a user via `POST /api/auth/register` with `username`, `email`, `password`, and `role` (`ROLE_USER` or `ROLE_ADMIN`).
-2. **Login** via `POST /api/auth/login` with `username` and `password`. You receive a JWT token.
-3. **Use the token** in subsequent requests as a Bearer token:
+1. **Rejestracja** użytkownika przez `POST /api/auth/register` z podaniem `username`, `email`, `password` oraz `role` (`ROLE_USER` lub `ROLE_ADMIN`).
+2. **Logowanie** przez `POST /api/auth/login` z podaniem `username` i `password`. W odpowiedzi otrzymujesz token JWT.
+3. **Użycie tokenu** w kolejnych zapytaniach jako token Bearer:
    ```
-   Authorization: Bearer <your-jwt-token>
+   Authorization: Bearer <twoj-token-jwt>
    ```
 
 ---
 
 ## Swagger / OpenAPI
 
-When the application is running, visit:
+Po uruchomieniu aplikacji przejdź pod adres:
 
 - **Swagger UI**: http://localhost:8080/swagger-ui.html
 - **OpenAPI JSON**: http://localhost:8080/v3/api-docs
 
 ---
 
-## Project Structure
+## Struktura projektu
 
 ```
 src/main/java/com/asms/
-├── AsmsApplication.java          # Main entry point
+├── AsmsApplication.java          # Główny punkt wejścia
 ├── config/
-│   ├── JpaConfig.java            # JPA + ModelMapper config
-│   └── SecurityConfig.java       # Spring Security + JWT config
+│   ├── JpaConfig.java            # Konfiguracja JPA + ModelMapper
+│   └── SecurityConfig.java       # Konfiguracja Spring Security + JWT
 ├── controller/
 │   ├── UserController.java
 │   ├── ComputerController.java
@@ -233,19 +233,19 @@ src/main/java/com/asms/
 
 ---
 
-## Technologies
+## Użyte technologie
 
-| Technology              | Version  | Purpose                          |
-|-------------------------|----------|----------------------------------|
-| Spring Boot             | 3.2.0    | Application framework            |
-| Spring Security         | 6.x      | Authentication & authorization   |
-| Spring Data JPA         | 3.x      | Database access layer            |
-| Hibernate               | 6.x      | ORM                              |
-| MySQL Connector/J       | 8.0.33   | MySQL JDBC driver                |
-| H2 Database             | -        | In-memory DB for development     |
-| JJWT                    | 0.12.3   | JWT generation & validation      |
-| Lombok                  | -        | Boilerplate reduction            |
-| ModelMapper             | 3.1.1    | Object mapping                   |
-| SpringDoc OpenAPI       | 2.0.2    | API documentation (Swagger UI)   |
-| Java                    | 17       | Programming language             |
-| Maven                   | 3.6+     | Build tool                       |
+| Technologia             | Wersja   | Przeznaczenie                         |
+|-------------------------|----------|---------------------------------------|
+| Spring Boot             | 3.2.0    | Framework aplikacyjny                 |
+| Spring Security         | 6.x      | Uwierzytelnianie i autoryzacja        |
+| Spring Data JPA         | 3.x      | Warstwa dostępu do bazy danych        |
+| Hibernate               | 6.x      | ORM                                   |
+| MySQL Connector/J       | 8.0.33   | Sterownik JDBC do MySQL               |
+| H2 Database             | -        | Baza in-memory do celów deweloperskich|
+| JJWT                    | 0.12.3   | Generowanie i walidacja tokenów JWT   |
+| Lombok                  | -        | Redukcja kodu szablonowego            |
+| ModelMapper             | 3.1.1    | Mapowanie obiektów                    |
+| SpringDoc OpenAPI       | 2.0.2    | Dokumentacja API (Swagger UI)         |
+| Java                    | 17       | Język programowania                   |
+| Maven                   | 3.6+     | Narzędzie do budowania projektu       |
